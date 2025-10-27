@@ -10,6 +10,8 @@ API_KEY = os.getenv("API_KEY")
 
 CHANNEL_HANDLE = "MrBeast"
 
+#testing changes pushing to dev and merging to main
+
 def get_playlist_id():
     try:
         url = f"https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle={CHANNEL_HANDLE}&key={API_KEY}"

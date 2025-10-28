@@ -1,6 +1,7 @@
 import os
 import requests
 import json
+from datetime import date
 
 from dotenv import load_dotenv
 
@@ -10,7 +11,6 @@ API_KEY = os.getenv("API_KEY")
 
 CHANNEL_HANDLE = "MrBeast"
 maxResults = 50
-
 
 def get_playlist_id():
     try:
@@ -30,14 +30,11 @@ def get_playlist_id():
     except requests.exceptions.RequestException as e:
         raise e
     
-
-
 def get_video_ids(playlistId):
     video_ids = []
     pageToken = None
     base_url = f"https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults={maxResults}&playlistId={playlistId}&key={API_KEY}"
                  
-
     try:
         while True:
 
@@ -62,9 +59,6 @@ def get_video_ids(playlistId):
             
     except requests.exceptions.RequestException as e:
         raise e
-
-
-
 
 def extract_video_data(video_ids):
     extracted_data = []
@@ -104,12 +98,17 @@ def extract_video_data(video_ids):
 
         return extracted_data
 
-
-
     except requests.exceptions.RequestException as e:
         raise e
+
+def save_to_json(extracted_data):
+    file_path = f'/Users/parkebluhm/data_projects/youtube_elt/data/YT_data_{date.today()}.json'
+
+    with open(file_path, "w", encoding="utf-8") as json_outfile:
+        json.dump(extracted_data, json_outfile, indent=4, ensure_ascii=False)
 
 if __name__ == "__main__":
     playlistId = get_playlist_id()
     video_ids = get_video_ids(playlistId)
-    extract_video_data(video_ids)
+    video_data = extract_video_data(video_ids)
+    save_to_json(video_data)

@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 SODA_PATH = "/opt/airflow/include/soda"
 DATASOURCE = "pg_datasource"
 
-
 def yt_elt_data_quality(schema):
     try:
         task = BashOperator(

@@ -159,6 +159,7 @@ services:
  
   airflow-webserver:
     <<: *airflow-common
+    platform: linux/amd64
     command: webserver
     container_name: airflow-webserver
     ports:
@@ -177,6 +178,7 @@ services:
  
   airflow-scheduler:
     <<: *airflow-common
+    platform: linux/amd64
     command: scheduler
     container_name: airflow-scheduler
     healthcheck:
@@ -193,6 +195,7 @@ services:
  
   airflow-worker:
     <<: *airflow-common
+    platform: linux/amd64
     command: celery worker
     container_name: airflow-worker
     healthcheck:
@@ -232,6 +235,7 @@ services:
  
   airflow-init:
     <<: *airflow-common
+    platform: linux/amd64
     entrypoint: /bin/bash
     container_name: airflow-init
     command:
@@ -295,6 +299,7 @@ services:
  
   airflow-cli:
     <<: *airflow-common
+    platform: linux/amd64
     profiles:
       - debug
     environment:

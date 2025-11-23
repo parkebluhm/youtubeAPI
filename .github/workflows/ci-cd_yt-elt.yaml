@@ -67,24 +67,37 @@ jobs:
       DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE }}
       DOCKERHUB_REPOSITORY: ${{ vars.DOCKERHUB_REPOSITORY }}
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Docker info
-        run: docker info
-      - name: Docker Compose config
-        run: docker compose config
-      - name: Set up Docker Compose
-        run: docker compose up -d
-      - name: Run Unit and Integration Tests
-        run: docker exec -t airflow-worker sh -c "pytest tests/ -v"
-      - name: Run End-to-End DAG Tests
-        run: |
-          DAG_NAMES=("produce_json" "update_db" "data_quality")
-          for DAG in "${DAG_NAMES[@]}"; do
-            docker exec -t airflow-worker sh -c "airflow dags test $DAG"
-          done
-      - name: Tear down Docker Compose
-        run: docker compose down
+steps:
+  - name: Checkout code
+    uses: actions/checkout@v4
+    with:
+      submodules: true
+
+  - name: Docker info
+    run: docker info
+
+  - name: Docker Compose config
+    run: docker compose config
+
+  - name: Set up Docker Compose
+    run: docker compose up -d
+
+  # ⭐ Add this step to see why airflow-init died
+  - name: Show airflow-init logs
+    run: |
+      echo "===== airflow-init logs ====="
+      docker compose logs airflow-init || true
+
+  - name: Run Unit and Integration Tests
+    run: docker exec -t airflow-worker sh -c "pytest tests/ -v"
+
+  - name: Run End-to-End DAG Tests
+    run: |
+      DAG_NAMES=("produce_json" "update_db" "data_quality")
+      for DAG in "${DAG_NAMES[@]}"; do
+        docker exec -t airflow-worker sh -c "airflow dags test $DAG"
+      done
+
+  - name: Tear down Docker Compose
+    run: docker compose down
+
